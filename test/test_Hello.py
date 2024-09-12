@@ -1,14 +1,24 @@
+import unittest
+import pytest
 from src.Hello import *;
 
 
-class TestHello():
-  
-    def test_hello_world(self, capsys):
-        hello()
-        captured = capsys.readouterr()
-        assert captured.out == "Hello World!\n", "Unexpected Output"
+class TestHello(unittest.TestCase):
 
-    def test_fail(self, capsys):
+    @pytest.fixture(autouse=True)
+    def capsys(self, capsys):
+        """Capsys hook into this class"""
+        self.capsys = capsys
+  
+    def test_hello_world(self):
         hello()
-        captured = capsys.readouterr()
-        assert captured.out == "Wrong Output\n", "Unexpected Output"
+        captured = self.capsys.readouterr()
+        self.assertEqual(captured.out,"Hello World!\n")
+
+    def test_fail(self):
+        hello()
+        captured = self.capsys.readouterr()
+        self.assertEqual(captured.out, "Wrong Output\n",)
+
+if __name__ == "__main__":
+    unittest.main()
